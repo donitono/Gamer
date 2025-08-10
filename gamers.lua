@@ -3,11 +3,10 @@
     
     Premium Fish It script with ULTIMATE features:
     • Quick Start Presets & Advanced Analytics
-    • Smart Inventory Management & AI Features  
+    • Smart Inventory Management & AI Features
     • Enhanced Fishing & Quality of Life
     • Smart Notifications & Safety Systems
     • Advanced Automation & Much More
-    • Ultimate Teleportation System (NEW!)
     
     Developer: XSAN
     Instagram: @_bangicoo
@@ -138,8 +137,6 @@ local PresetsTab = Window:CreateTab("PRESETS", "zap")
 print("XSAN: PresetsTab created")
 local MainTab = Window:CreateTab("AUTO FISH", "fish") 
 print("XSAN: MainTab created")
-local TeleportTab = Window:CreateTab("TELEPORT", "map-pin")
-print("XSAN: TeleportTab created")
 local AnalyticsTab = Window:CreateTab("ANALYTICS", "bar-chart")
 print("XSAN: AnalyticsTab created")
 local InventoryTab = Window:CreateTab("INVENTORY", "package")
@@ -172,8 +169,6 @@ print("XSAN: Remotes loading completed!")
 print("XSAN: Initializing variables...")
 local autofish = false
 local perfectCast = false
-local safeMode = false  -- Safe Mode for random perfect cast
-local safeModeChance = 70  -- 70% chance for perfect cast in safe mode
 local autoRecastDelay = 0.5
 local fishCaught = 0
 local itemsSold = 0
@@ -181,7 +176,6 @@ local autoSellThreshold = 10
 local autoSellOnThreshold = false
 local sessionStartTime = tick()
 local perfectCasts = 0
-local normalCasts = 0  -- Track normal casts for analytics
 local currentPreset = "None"
 local globalAutoSellEnabled = true  -- Global auto sell control
 
@@ -194,170 +188,6 @@ local featureState = {
 }
 
 print("XSAN: Variables initialized successfully!")
-
--- XSAN Ultimate Teleportation System
-print("XSAN: Initializing teleportation system...")
-
--- Dynamic Teleportation System (Matching bang.lua)
-local tpFolder = workspace:FindFirstChild("!!!! ISLAND LOCATIONS !!!!")
-local charFolder = workspace:FindFirstChild("Characters")
-
--- Dynamic Island Detection
-local function getDynamicIslands()
-    local islands = {}
-    if tpFolder then
-        for _, island in ipairs(tpFolder:GetChildren()) do
-            if island:IsA("BasePart") then
-                islands[island.Name] = island.CFrame
-            end
-        end
-    end
-    return islands
-end
-
--- Dynamic Player Detection
-local function getDynamicPlayers()
-    local players = {}
-    if charFolder then
-        for _, player in ipairs(charFolder:GetChildren()) do
-            if player:IsA("Model") and player.Name ~= LocalPlayer.Name and player:FindFirstChild("HumanoidRootPart") then
-                players[player.Name] = player.HumanoidRootPart.CFrame
-            end
-        end
-    end
-    -- Also get from Players service for active players
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-            players[plr.Name] = plr.Character.HumanoidRootPart.CFrame
-        end
-    end
-    return players
-end
-
--- Teleportation Data (Now Dynamic + Static Backup)
-local TeleportLocations = {
-    Islands = getDynamicIslands(),
-    
-    NPCs = {
-        ["🛒 Shop (Alex)"] = CFrame.new(391, 135, 300),
-        ["🎣 Rod Shop (Marc)"] = CFrame.new(454, 150, 229),
-        ["⚓ Shipwright (Shipwright)"] = CFrame.new(343, 135, 271),
-        ["📦 Storage (Henry)"] = CFrame.new(491, 150, 272),
-        ["🏆 Angler (Angler)"] = CFrame.new(484, 150, 331),
-        ["🦈 Shark Hunter (Shark Hunter)"] = CFrame.new(-1442, 142, 1006),
-        ["❄️ Ice Merchant (Ice Merchant)"] = CFrame.new(2648, 140, 2522),
-        ["🌙 Moonstone Merchant"] = CFrame.new(-3004, 135, -1157),
-        ["🏛️ Keeper (Keeper)"] = CFrame.new(1296, 135, -808),
-        ["🌊 Deep Merchant"] = CFrame.new(994, -715, 1226)
-    },
-    
-    Events = {
-        ["🌟 Isonade Event"] = CFrame.new(-1442, 135, 1006),
-        ["🦈 Great White Event"] = CFrame.new(1082, 124, -924),
-        ["❄️ Whale Event"] = CFrame.new(2648, 140, 2522),
-        ["🔥 Volcano Event"] = CFrame.new(-1888, 164, 330),
-        ["🌙 Lunar Event"] = CFrame.new(-3004, 135, -1157),
-        ["🏛️ Altar Event"] = CFrame.new(1296, 135, -808),
-        ["🌊 Deep Sea Event"] = CFrame.new(994, -715, 1226)
-    },
-    
-    Players = getDynamicPlayers()
-}
-
--- Safe Teleportation Function (Enhanced for Dynamic)
-local function SafeTeleport(targetCFrame, locationName)
-    pcall(function()
-        if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            NotifyError("Teleport", "Character not found! Cannot teleport.")
-            return
-        end
-        
-        -- Safety check for CFrame
-        if not targetCFrame or typeof(targetCFrame) ~= "CFrame" then
-            NotifyError("Teleport", "Invalid location: " .. tostring(locationName))
-            return
-        end
-        
-        -- Store current position for undo
-        lastPosition = LocalPlayer.Character.HumanoidRootPart.CFrame
-        
-        -- Teleport with offset for safety
-        LocalPlayer.Character.HumanoidRootPart.CFrame = targetCFrame + Vector3.new(0, 3, 0)
-        
-        NotifySuccess("Teleported!", "Successfully teleported to: " .. locationName)
-    end)
-end
-
--- Update Dynamic Data Function
-local function UpdateDynamicData()
-    -- Update Islands from workspace
-    if tpFolder then
-        TeleportLocations.Islands = getDynamicIslands()
-    end
-    
-    -- Update Players
-    TeleportLocations.Players = getDynamicPlayers()
-end
-
--- Utility function for table keys
-local function GetTableKeys(tbl)
-    local keys = {}
-    for key, _ in pairs(tbl) do
-        table.insert(keys, key)
-    end
-    return keys
-end
-
--- Auto-refresh data every 5 seconds
-spawn(function()
-    while true do
-        wait(5)
-        UpdateDynamicData()
-    end
-end)
-        end
-        
-        local humanoidRootPart = LocalPlayer.Character.HumanoidRootPart
-        
-        -- Smooth teleportation with fade effect
-        local originalCFrame = humanoidRootPart.CFrame
-        
-        -- Teleport with slight offset to avoid collision
-        local safePosition = targetCFrame.Position + Vector3.new(0, 5, 0)
-        humanoidRootPart.CFrame = CFrame.new(safePosition) * CFrame.Angles(0, math.rad(math.random(-180, 180)), 0)
-        
-        wait(0.1)
-        
-        -- Lower to ground
-        humanoidRootPart.CFrame = targetCFrame
-        
-        NotifySuccess("Teleport", "Successfully teleported to: " .. locationName)
-        
-        -- Log teleportation for analytics
-        print("XSAN Teleport: " .. LocalPlayer.Name .. " -> " .. locationName)
-    end)
-end
-
--- Player Teleportation Function
-local function TeleportToPlayer(targetPlayerName)
-    pcall(function()
-        local targetPlayer = game.Players:FindFirstChild(targetPlayerName)
-        if not targetPlayer then
-            NotifyError("Player TP", "Player '" .. targetPlayerName .. "' not found!")
-            return
-        end
-        
-        if not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            NotifyError("Player TP", "Target player's character not found!")
-            return
-        end
-        
-        local targetCFrame = targetPlayer.Character.HumanoidRootPart.CFrame
-        SafeTeleport(targetCFrame, targetPlayerName .. "'s location")
-    end)
-end
-
-print("XSAN: Teleportation system initialized successfully!")
 
 -- Notification Functions
 local function NotifySuccess(title, message)
@@ -393,7 +223,6 @@ local function ApplyPreset(presetName)
     if presetName == "Beginner" then
         autoRecastDelay = 2.0
         perfectCast = false
-        safeMode = false
         autoSellThreshold = 5
         autoSellOnThreshold = globalAutoSellEnabled  -- Use global setting
         NotifySuccess("Preset Applied", "Beginner mode activated - Safe and easy settings" .. (globalAutoSellEnabled and " (Auto Sell: ON)" or " (Auto Sell: OFF)"))
@@ -401,7 +230,6 @@ local function ApplyPreset(presetName)
     elseif presetName == "Speed" then
         autoRecastDelay = 0.5
         perfectCast = true
-        safeMode = false
         autoSellThreshold = 20
         autoSellOnThreshold = globalAutoSellEnabled  -- Use global setting
         NotifySuccess("Preset Applied", "Speed mode activated - Maximum fishing speed" .. (globalAutoSellEnabled and " (Auto Sell: ON)" or " (Auto Sell: OFF)"))
@@ -409,7 +237,6 @@ local function ApplyPreset(presetName)
     elseif presetName == "Profit" then
         autoRecastDelay = 1.0
         perfectCast = true
-        safeMode = false
         autoSellThreshold = 15
         autoSellOnThreshold = globalAutoSellEnabled  -- Use global setting
         NotifySuccess("Preset Applied", "Profit mode activated - Optimized for maximum earnings" .. (globalAutoSellEnabled and " (Auto Sell: ON)" or " (Auto Sell: OFF)"))
@@ -417,19 +244,9 @@ local function ApplyPreset(presetName)
     elseif presetName == "AFK" then
         autoRecastDelay = 1.5
         perfectCast = true
-        safeMode = false
         autoSellThreshold = 25
         autoSellOnThreshold = globalAutoSellEnabled  -- Use global setting
         NotifySuccess("Preset Applied", "AFK mode activated - Safe for long sessions" .. (globalAutoSellEnabled and " (Auto Sell: ON)" or " (Auto Sell: OFF)"))
-        
-    elseif presetName == "Safe" then
-        autoRecastDelay = 1.2
-        perfectCast = false
-        safeMode = true
-        safeModeChance = 70
-        autoSellThreshold = 18
-        autoSellOnThreshold = globalAutoSellEnabled
-        NotifySuccess("Preset Applied", "Safe mode activated - Smart random casting (70% perfect, 30% normal)" .. (globalAutoSellEnabled and " (Auto Sell: ON)" or " (Auto Sell: OFF)"))
         
     elseif presetName == "AutoSellOn" then
         globalAutoSellEnabled = true
@@ -559,13 +376,6 @@ PresetsTab:CreateButton({
     end, "preset_afk")
 })
 
-PresetsTab:CreateButton({
-    Name = "🛡️ Safe Mode",
-    Callback = CreateSafeCallback(function()
-        ApplyPreset("Safe") 
-    end, "preset_safe")
-})
-
 PresetsTab:CreateParagraph({
     Title = "Auto Sell Global Controls",
     Content = "Global auto sell control - When you set Auto Sell ON/OFF, it will apply to ALL preset modes. This gives you master control over auto selling."
@@ -586,227 +396,6 @@ PresetsTab:CreateButton({
 })
 
 print("XSAN: PRESETS tab completed successfully!")
-
--- ═══════════════════════════════════════════════════════════════
--- TELEPORT TAB - Ultimate Teleportation System
--- ═══════════════════════════════════════════════════════════════
-
-print("XSAN: Creating TELEPORT tab content...")
-TeleportTab:CreateParagraph({
-    Title = "XSAN Ultimate Teleport System",
-    Content = "Instant teleportation to any location with smart safety features. The most advanced teleportation system for Fish It!"
-})
-
--- Islands Section (Dynamic)
-TeleportTab:CreateParagraph({
-    Title = "🏝️ Island Teleportation",
-    Content = "Dynamic island detection from workspace. Automatically detects all available fishing locations!"
-})
-
--- Function to refresh island buttons
-local function RefreshIslandButtons()
-    -- Update dynamic data first
-    TeleportLocations.Islands = getDynamicIslands()
-end
-
--- Initial load
-RefreshIslandButtons()
-
--- Create buttons for each island (Dynamic)
-for locationName, cframe in pairs(TeleportLocations.Islands) do
-    TeleportTab:CreateButton({
-        Name = locationName,
-        Callback = CreateSafeCallback(function()
-            SafeTeleport(cframe, locationName)
-        end, "tp_island_" .. locationName)
-    })
-end
-
--- NPCs Section
-TeleportTab:CreateParagraph({
-    Title = "🛒 NPC Teleportation",
-    Content = "Instantly teleport to important NPCs for trading, upgrades, and services. Save time with quick access!"
-})
-
--- Create buttons for each NPC
-for npcName, cframe in pairs(TeleportLocations.NPCs) do
-    TeleportTab:CreateButton({
-        Name = npcName,
-        Callback = CreateSafeCallback(function()
-            SafeTeleport(cframe, npcName)
-        end, "tp_npc_" .. npcName)
-    })
-end
-
--- Events Section
-TeleportTab:CreateParagraph({
-    Title = "🌟 Event Teleportation",
-    Content = "Quick access to event locations and special fishing spots. Never miss an event again!"
-})
-
--- Create buttons for each event location
-for eventName, cframe in pairs(TeleportLocations.Events) do
-    TeleportTab:CreateButton({
-        Name = eventName,
-        Callback = CreateSafeCallback(function()
-            SafeTeleport(cframe, eventName)
-        end, "tp_event_" .. eventName)
-    })
-end
-
--- Player Teleportation Section
-TeleportTab:CreateParagraph({
-    Title = "👥 Player Teleportation",
-    Content = "Teleport to other players in the server. Great for meeting friends or following experienced fishers!"
-})
-
-TeleportTab:CreateButton({
-    Name = "🔄 Refresh Player List",
-    Callback = CreateSafeCallback(function()
-        local playerCount = 0
-        local playerList = ""
-        
-        -- Update dynamic player data
-        TeleportLocations.Players = getDynamicPlayers()
-        
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                playerCount = playerCount + 1
-                playerList = playerList .. player.Name .. " • "
-            end
-        end
-        
-        if playerCount > 0 then
-            NotifyInfo("Player List", "Players in server (" .. playerCount .. "):\n\n" .. playerList:sub(1, -3))
-        else
-            NotifyInfo("Player List", "No other players found in the server!")
-        end
-    end, "refresh_players")
-})
-
--- Dynamic Islands Refresh Button
-TeleportTab:CreateButton({
-    Name = "🏝️ Refresh Islands",
-    Callback = CreateSafeCallback(function()
-        TeleportLocations.Islands = getDynamicIslands()
-        local islandCount = 0
-        local islandList = ""
-        
-        for islandName, _ in pairs(TeleportLocations.Islands) do
-            islandCount = islandCount + 1
-            islandList = islandList .. islandName .. " • "
-        end
-        
-        if islandCount > 0 then
-            NotifySuccess("Islands Updated", "Found " .. islandCount .. " islands:\n\n" .. islandList:sub(1, -3))
-        else
-            NotifyError("No Islands", "No islands found in workspace!")
-        end
-    end, "refresh_islands")
-})
-
--- Create direct teleport buttons for current players
-local function CreateLivePlayerButtons()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            TeleportTab:CreateButton({
-                Name = "👤 TP to " .. player.Name,
-                Callback = CreateSafeCallback(function()
-                    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                        SafeTeleport(player.Character.HumanoidRootPart.CFrame, player.Name)
-                    else
-                        NotifyError("Player Offline", player.Name .. " is no longer available!")
-                    end
-                end, "tp_live_player_" .. player.Name)
-            })
-        end
-    end
-end
-
--- Initial player buttons
-CreateLivePlayerButtons()
-local playerDropdown
-spawn(function()
-    while true do
-        wait(5) -- Update every 5 seconds
-        pcall(function()
-            if TeleportTab then
-                local players = {}
-                for _, player in pairs(game.Players:GetPlayers()) do
-                    if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                        table.insert(players, player.Name)
-                    end
-                end
-                
-                if #players > 0 then
-                    -- Update player list (if dropdown exists, recreate it)
-                    -- For now, we'll use buttons since Rayfield dropdown might not support dynamic updates
-                end
-            end
-        end)
-    end
-end)
-
--- Manual Player Teleport
-local targetPlayerName = ""
-
-TeleportTab:CreateInput({
-    Name = "Enter Player Name",
-    PlaceholderText = "Type player name here...",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(text)
-        targetPlayerName = text
-    end
-})
-
-TeleportTab:CreateButton({
-    Name = "🎯 Teleport to Player",
-    Callback = CreateSafeCallback(function()
-        if targetPlayerName and targetPlayerName ~= "" then
-            TeleportToPlayer(targetPlayerName)
-        else
-            NotifyError("Player TP", "Please enter a player name first!")
-        end
-    end, "tp_to_player")
-})
-
--- Utility Teleportation
-TeleportTab:CreateParagraph({
-    Title = "🔧 Teleport Utilities",
-    Content = "Additional teleportation features and safety options."
-})
-
-TeleportTab:CreateButton({
-    Name = "📍 Save Current Position",
-    Callback = CreateSafeCallback(function()
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            _G.XSANSavedPosition = LocalPlayer.Character.HumanoidRootPart.CFrame
-            NotifySuccess("Position Saved", "Current position saved! Use 'Return to Saved Position' to come back here.")
-        else
-            NotifyError("Save Position", "Character not found!")
-        end
-    end, "save_position")
-})
-
-TeleportTab:CreateButton({
-    Name = "🔙 Return to Saved Position",
-    Callback = CreateSafeCallback(function()
-        if _G.XSANSavedPosition then
-            SafeTeleport(_G.XSANSavedPosition, "Saved Position")
-        else
-            NotifyError("Return Position", "No saved position found! Save a position first.")
-        end
-    end, "return_position")
-})
-
-TeleportTab:CreateButton({
-    Name = "🏠 Teleport to Spawn",
-    Callback = CreateSafeCallback(function()
-        SafeTeleport(CFrame.new(389, 137, 264), "Moosewood Spawn")
-    end, "tp_spawn")
-})
-
-print("XSAN: TELEPORT tab completed successfully!")
 
 -- ═══════════════════════════════════════════════════════════════
 -- AUTO FISH TAB - Enhanced Fishing System
@@ -831,18 +420,12 @@ MainTab:CreateToggle({
                         if equipRemote then equipRemote:FireServer(1) end
                         wait(0.1)
 
-                        -- Safe Mode Logic: Random between perfect and normal cast
-                        local usePerfectCast = perfectCast
-                        if safeMode then
-                            usePerfectCast = math.random(1, 100) <= safeModeChance
-                        end
-
-                        local timestamp = usePerfectCast and 9999999999 or (tick() + math.random())
+                        local timestamp = perfectCast and 9999999999 or (tick() + math.random())
                         if rodRemote then rodRemote:InvokeServer(timestamp) end
                         wait(0.1)
 
-                        local x = usePerfectCast and -1.238 or (math.random(-1000, 1000) / 1000)
-                        local y = usePerfectCast and 0.969 or (math.random(0, 1000) / 1000)
+                        local x = perfectCast and -1.238 or (math.random(-1000, 1000) / 1000)
+                        local y = perfectCast and 0.969 or (math.random(0, 1000) / 1000)
 
                         if miniGameRemote then miniGameRemote:InvokeServer(x, y) end
                         wait(1.3)
@@ -850,11 +433,8 @@ MainTab:CreateToggle({
                         
                         fishCaught = fishCaught + 1
                         
-                        -- Track cast types for analytics
-                        if usePerfectCast then
+                        if perfectCast then
                             perfectCasts = perfectCasts + 1
-                        else
-                            normalCasts = normalCasts + 1
                         end
                         
                         CheckAndAutoSell()
@@ -873,38 +453,8 @@ MainTab:CreateToggle({
     CurrentValue = false,
     Callback = CreateSafeCallback(function(val)
         perfectCast = val
-        if val then
-            safeMode = false  -- Disable safe mode when perfect cast is manually enabled
-        end
         NotifySuccess("Perfect Cast", "Perfect cast mode " .. (val and "activated" or "deactivated") .. "!")
     end, "perfectcast")
-})
-
-MainTab:CreateToggle({
-    Name = "🛡️ Safe Mode (Smart Random)",
-    CurrentValue = false,
-    Callback = CreateSafeCallback(function(val)
-        safeMode = val
-        if val then
-            perfectCast = false  -- Disable perfect cast when safe mode is enabled
-            NotifySuccess("Safe Mode", "Safe mode activated - Smart random casting for better stealth!")
-        else
-            NotifyInfo("Safe Mode", "Safe mode deactivated - Manual control restored")
-        end
-    end, "safemode")
-})
-
-MainTab:CreateSlider({
-    Name = "Safe Mode Perfect Cast %",
-    Range = {30, 90},
-    Increment = 5,
-    CurrentValue = safeModeChance,
-    Callback = function(val)
-        safeModeChance = val
-        if safeMode then
-            NotifyInfo("Safe Mode", "Perfect cast chance set to: " .. val .. "%")
-        end
-    end
 })
 
 MainTab:CreateSlider({
@@ -961,12 +511,10 @@ AnalyticsTab:CreateButton({
         local sessionTime = (tick() - sessionStartTime) / 60
         local fishPerHour = CalculateFishPerHour()
         local estimatedProfit = CalculateProfit()
-        local totalCasts = perfectCasts + normalCasts
-        local perfectEfficiency = totalCasts > 0 and (perfectCasts / totalCasts * 100) or 0
-        local castingMode = safeMode and "Safe Mode" or (perfectCast and "Perfect Cast" or "Normal Cast")
+        local efficiency = perfectCasts > 0 and (perfectCasts / fishCaught * 100) or 0
         
-        local stats = string.format("XSAN Ultimate Analytics:\n\nSession Time: %.1f minutes\nFish Caught: %d\nFish/Hour: %d\n\n=== CASTING STATS ===\nMode: %s\nPerfect Casts: %d (%.1f%%)\nNormal Casts: %d\nTotal Casts: %d\n\n=== EARNINGS ===\nItems Sold: %d\nEstimated Profit: %d coins\nActive Preset: %s", 
-            sessionTime, fishCaught, fishPerHour, castingMode, perfectCasts, perfectEfficiency, normalCasts, totalCasts, itemsSold, estimatedProfit, currentPreset
+        local stats = string.format("XSAN Ultimate Analytics:\n\nSession Time: %.1f minutes\nFish Caught: %d\nFish/Hour: %d\nPerfect Casts: %d (%.1f%%)\nItems Sold: %d\nEstimated Profit: %d coins\nActive Preset: %s", 
+            sessionTime, fishCaught, fishPerHour, perfectCasts, efficiency, itemsSold, estimatedProfit, currentPreset
         )
         NotifyInfo("Advanced Stats", stats)
     end, "detailed_stats")
@@ -979,7 +527,6 @@ AnalyticsTab:CreateButton({
         fishCaught = 0
         itemsSold = 0
         perfectCasts = 0
-        normalCasts = 0
         NotifySuccess("Analytics", "All statistics have been reset!")
     end, "reset_stats")
 })
@@ -1143,72 +690,23 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     elseif input.KeyCode == Enum.KeyCode.F3 then
         autoSellOnThreshold = not autoSellOnThreshold
         NotifyInfo("Hotkey", "Auto sell threshold " .. (autoSellOnThreshold and "enabled" or "disabled") .. " (F3)")
-    elseif input.KeyCode == Enum.KeyCode.F4 then
-        -- Quick teleport to spawn
-        SafeTeleport(CFrame.new(389, 137, 264), "Moosewood Spawn")
-        NotifyInfo("Hotkey", "Quick teleport to spawn (F4)")
-    elseif input.KeyCode == Enum.KeyCode.F5 then
-        -- Save current position
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            _G.XSANSavedPosition = LocalPlayer.Character.HumanoidRootPart.CFrame
-            NotifyInfo("Hotkey", "Position saved (F5)")
-        end
-    elseif input.KeyCode == Enum.KeyCode.F6 then
-        -- Return to saved position
-        if _G.XSANSavedPosition then
-            SafeTeleport(_G.XSANSavedPosition, "Saved Position")
-            NotifyInfo("Hotkey", "Returned to saved position (F6)")
-        end
     end
 end)
 
 -- Welcome Messages
 spawn(function()
     wait(2)
-    NotifySuccess("Welcome!", "XSAN Fish It Pro ULTIMATE v1.0 loaded successfully!\n\nULTIMATE FEATURES ACTIVATED:\nAI-Powered Analytics • Smart Automation • Advanced Safety • Premium Quality • Ultimate Teleportation • And Much More!\n\nReady to dominate Fish It like never before!")
+    NotifySuccess("Welcome!", "XSAN Fish It Pro ULTIMATE v1.0 loaded successfully!\n\nULTIMATE FEATURES ACTIVATED:\nAI-Powered Analytics • Smart Automation • Advanced Safety • Premium Quality • And Much More!\n\nReady to dominate Fish It like never before!")
     
     wait(4)
-    NotifyInfo("Hotkeys Active!", "HOTKEYS ENABLED:\nF1 - Toggle Auto Fishing\nF2 - Toggle Perfect Cast\nF3 - Toggle Auto Sell Threshold\nF4 - Quick TP to Spawn\nF5 - Save Position\nF6 - Return to Saved Position\n\nCheck PRESETS tab for quick setup!")
+    NotifyInfo("Hotkeys Active!", "HOTKEYS ENABLED:\nF1 - Toggle Auto Fishing\nF2 - Toggle Perfect Cast\nF3 - Toggle Auto Sell Threshold\n\nCheck PRESETS tab for quick setup!")
     
     wait(3)
     NotifyInfo("📱 Smart UI!", "SMART UI DETECTION:\nWindow automatically sized for your device!\n\nNeed manual resize? Check UTILITY tab for Mobile/Desktop size options!")
     
     wait(3)
-    NotifyInfo("🌟 Ultimate Teleportation!", "DYNAMIC TELEPORTATION SYSTEM ACTIVE:\n🏝️ Auto-detect Islands • 👥 Live Player Tracking • 🎯 Events • 📍 Position Saving\n\n✨ Now matches bang.lua system!\nCheck TELEPORT tab for instant travel!")
-    
-    wait(3)
     NotifyInfo("Follow XSAN!", "Instagram: @_bangicoo\nGitHub: codeico\n\nThe most advanced Fish It script ever created! Follow us for more premium scripts and exclusive updates!")
 end)
-
--- Dynamic Player Update Events (Matching bang.lua behavior)
-game.Players.PlayerAdded:Connect(function(player)
-    wait(1) -- Wait for player to fully load
-    UpdateDynamicData()
-    NotifyInfo("Player Joined", player.Name .. " joined the server!")
-end)
-
-game.Players.PlayerRemoving:Connect(function(player)
-    UpdateDynamicData()
-    NotifyInfo("Player Left", player.Name .. " left the server!")
-end)
-
--- Dynamic Island Detection (Check for workspace changes)
-if tpFolder then
-    tpFolder.ChildAdded:Connect(function(newIsland)
-        if newIsland:IsA("BasePart") then
-            wait(1) -- Wait for island to fully load
-            TeleportLocations.Islands = getDynamicIslands()
-            NotifySuccess("New Island!", "Detected new island: " .. newIsland.Name)
-        end
-    end)
-    
-    tpFolder.ChildRemoved:Connect(function(removedIsland)
-        if removedIsland:IsA("BasePart") then
-            TeleportLocations.Islands = getDynamicIslands()
-            NotifyInfo("Island Removed", "Island removed: " .. removedIsland.Name)
-        end
-    end)
-end
 
 -- Console Branding
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -1219,26 +717,6 @@ print("Instagram: @_bangicoo | GitHub: codeico")
 print("Professional Quality • Trusted by Thousands • Ultimate Edition")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print("XSAN: Script loaded successfully! All systems operational!")
-print("")
-print("🔧 DYNAMIC TELEPORTATION STATUS:")
-if tpFolder then
-    local islandCount = 0
-    for _ in pairs(getDynamicIslands()) do islandCount = islandCount + 1 end
-    print("✅ Islands Folder Found: " .. islandCount .. " islands detected")
-else
-    print("❌ Islands Folder Not Found - Using static coordinates")
-end
-
-if charFolder then
-    print("✅ Characters Folder Found - Dynamic player tracking active")
-else
-    print("❌ Characters Folder Not Found - Using Players service only")
-end
-
-local playerCount = 0
-for _ in pairs(getDynamicPlayers()) do playerCount = playerCount + 1 end
-print("👥 Active Players: " .. playerCount)
-print("")
 
 -- Performance Enhancements
 pcall(function()
