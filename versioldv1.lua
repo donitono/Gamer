@@ -2140,7 +2140,7 @@
 				while _G.AutoFishing do
 					pcall(function()
 						-- Pastikan equip rod dulu
-						local char = character or character:Wait()
+						local char = character or player.CharacterAdded:Wait()
 						local equippedTool = char:FindFirstChild("!!!EQUIPPED_TOOL!!!")
 
 						if not equippedTool then
