@@ -2361,5 +2361,6 @@
 	-- Welcome message with new features
 	wait(1)
 	NotifySuccess("ZayrosFISHIT v2.0", "Enhanced with new features!")
-	wait(2)
-	NotifyInfo("New Features", "🔹 Minimize Button (_) - Minimize UI\n🔹 Floating Button (🎣) - Toggle UI visibility\n🔹 Preset System - Quick fishing setups\n🔹 Perfect Cast Mode - Enhanced fishing\n🔹 Advanced Analytics - Detailed statistics")
+	
+	-- Script fully loaded and ready
+	print("ZayrosFISHIT v2.0 loaded with all features!")
